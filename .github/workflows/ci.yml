@@ -31,6 +31,10 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+      - name: Check Docker Version
+        shell: bash
+        run: docker --version
+
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.4.2
         with:
