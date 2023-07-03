@@ -33,7 +33,7 @@ jobs:
       - name: Publish artifacts
         uses: gradle/gradle-build-action@v2.4.2
         with:
-          arguments: publishToMavenLocal
+          arguments: publishToMavenLocal --stacktrace
         env:
           OSS_USERNAME: ${{ secrets.OSS_USERNAME }}
           OSS_PASSWORD: ${{ secrets.OSS_PASSWORD }}
