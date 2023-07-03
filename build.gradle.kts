@@ -22,8 +22,6 @@ scmVersion {
     }
     repository {
         pushTagsOnly.set(true)
-        val githubToken: String? by project
-        customUsername.set(githubToken)
     }
     checks {
         aheadOfRemote.set(false)
