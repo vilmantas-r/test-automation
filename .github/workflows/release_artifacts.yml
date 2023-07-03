@@ -15,12 +15,6 @@ jobs:
       contents: read
       packages: write
 
-    env:
-      MAVEN_SNAPSHOTS_REPOSITORY_URL: https://oss.sonatype.org/content/repositories/snapshots/
-      MAVEN_RELEASES_REPOSITORY_URL: https://oss.sonatype.org/service/local/staging/deploy/maven2/
-      OSS_USERNAME: ${{ secrets.OSS_USERNAME }}
-      OSS_PASSWORD: ${{ secrets.OSS_PASSWORD }}
-
     steps:
       - name: Checkout project
         uses: actions/checkout@v3
@@ -40,3 +34,9 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: publishToMavenLocal
+        env:
+          OSS_USERNAME: ${{ secrets.OSS_USERNAME }}
+          OSS_PASSWORD: ${{ secrets.OSS_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.GPG_SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}
