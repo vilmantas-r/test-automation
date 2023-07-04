@@ -1,11 +1,9 @@
-# This workflow will build a project with Gradle, publish artifacts and release new version
+# This workflow will build project with Gradle, publish artifacts and release new version
 
 name: "🚀 Release Artifacts"
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
 
@@ -42,6 +40,8 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: currentVersion release -Prelease.ignoreUncommittedChanges=true --stacktrace
+
+      - name: Push tags
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
