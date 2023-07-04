@@ -9,6 +9,9 @@ jobs:
 
   release_artifacts:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout project
