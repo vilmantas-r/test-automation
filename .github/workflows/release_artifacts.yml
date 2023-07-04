@@ -46,7 +46,7 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: currentVersion release -Prelease.ignoreUncommittedChanges=true --stacktrace
-        run: |
+      - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git push --tags
