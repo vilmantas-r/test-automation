@@ -13,7 +13,7 @@ plugins {
 }
 
 scmVersion {
-    localOnly.set(true)
+    localOnly.set(false)
     ignoreUncommittedChanges.set(false)
 
     tag {
@@ -235,10 +235,10 @@ configure(subprojects.filter { it.name !in setOf("demos", "demo-ui-test") }) {
     }
 
     signing {
-        val signingKeyId: String? by project
-        val signingKey: String? by project
-        val signingPassword: String? by project
-        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+        val keyId: String? = System.getenv("GPG_KEY_ID")
+        val signingKey: String? = System.getenv("GPG_SIGNING_KEY")
+        val signingPassword: String? = System.getenv("GPG_SIGNING_PASSWORD")
+        useInMemoryPgpKeys(keyId, signingKey, signingPassword)
         sign(publishing.publications[project.name])
     }
 }

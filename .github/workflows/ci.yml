@@ -29,6 +29,9 @@ jobs:
         shell: bash
         run: docker --version
 
+      - name: Gradle Wrapper validation
+        uses: gradle/wrapper-validation-action@v1.0.6
+
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.4.2
         with:
