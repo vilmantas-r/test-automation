@@ -38,7 +38,7 @@ version = scmVersion.version
 
 fun Properties.getRequiredProperty(envVarName: String, propName: String) =
     System.getenv(envVarName).takeUnless { it.isNullOrBlank() }
-        ?: this.getProperty(propName).takeUnless { it.isNullOrBlank() }
+        ?: this.getProperty(propName)
 
 val props = Properties()
 rootProject.file("gradle-local.properties").takeIf { it.exists() }?.inputStream()?.use { props.load(it) }
@@ -220,11 +220,15 @@ configure(subprojects.filter { it.name !in setOf("demos", "demo-ui-test") }) {
         }
 
         repositories {
+            val defaultSnapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            val defaultReleasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
             maven {
                 url = if (version.toString().endsWith("SNAPSHOT")) {
-                    uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                    uri(props.getRequiredProperty("MAVEN_SNAPSHOTS_REPOSITORY_URL", "snapshotsRepoUrl")
+                            .takeUnless { it.isNullOrBlank() } ?: defaultSnapshotsRepoUrl)
                 } else {
-                    uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                    uri(props.getRequiredProperty("MAVEN_RELEASES_REPOSITORY_URL", "releasesRepoUrl")
+                            .takeUnless { it.isNullOrBlank() } ?: defaultReleasesRepoUrl)
                 }
                 credentials(org.gradle.api.artifacts.repositories.PasswordCredentials::class) {
                     username = props.getRequiredProperty("OSS_USERNAME", "ossUsername")
