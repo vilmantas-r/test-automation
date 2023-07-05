@@ -13,7 +13,7 @@ plugins {
 }
 
 scmVersion {
-    localOnly.set(true)
+    localOnly.set(false)
     ignoreUncommittedChanges.set(false)
 
     tag {
@@ -36,14 +36,9 @@ version = scmVersion.version
 
  val targetJavaVersion = JavaVersion.VERSION_11
 
-class MissingRequiredPropertyException(envVarName: String, propName: String) : GradleException(
-    "No '$envVarName' environment variable nor '$propName' in 'gradle-local.properties' are configured"
-)
-
 fun Properties.getRequiredProperty(envVarName: String, propName: String) =
     System.getenv(envVarName).takeUnless { it.isNullOrBlank() }
         ?: this.getProperty(propName).takeUnless { it.isNullOrBlank() }
-        ?: throw MissingRequiredPropertyException(envVarName, propName)
 
 val props = Properties()
 rootProject.file("gradle-local.properties").takeIf { it.exists() }?.inputStream()?.use { props.load(it) }
@@ -227,9 +222,9 @@ configure(subprojects.filter { it.name !in setOf("demos", "demo-ui-test") }) {
         repositories {
             maven {
                 url = if (version.toString().endsWith("SNAPSHOT")) {
-                    uri(props.getRequiredProperty("MAVEN_SNAPSHOTS_REPOSITORY_URL", "snapshotsRepoUrl"))
+                    uri("https://oss.sonatype.org/content/repositories/snapshots/")
                 } else {
-                    uri(props.getRequiredProperty("MAVEN_RELEASES_REPOSITORY_URL", "releasesRepoUrl"))
+                    uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
                 }
                 credentials(org.gradle.api.artifacts.repositories.PasswordCredentials::class) {
                     username = props.getRequiredProperty("OSS_USERNAME", "ossUsername")
@@ -240,6 +235,10 @@ configure(subprojects.filter { it.name !in setOf("demos", "demo-ui-test") }) {
     }
 
     signing {
+        val keyId: String? = System.getenv("GPG_KEY_ID")
+        val signingKey: String? = System.getenv("GPG_SIGNING_KEY")
+        val signingPassword: String? = System.getenv("GPG_SIGNING_PASSWORD")
+        useInMemoryPgpKeys(keyId, signingKey, signingPassword)
         sign(publishing.publications[project.name])
     }
 }
